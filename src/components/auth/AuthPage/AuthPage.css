@@ -1,0 +1,27 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: rgb(58, 112, 188);
+}
+
+.frame {
+  max-width: 95vw;
+  margin: 1rem auto;
+  background-color: rgb(255, 255, 255);
+  border-radius: 34px;
+  overflow: hidden;
+  border: 10px solid white;
+  display: flex;
+}
+
+.right-side {
+  width: calc(811/16 * 1rem);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}

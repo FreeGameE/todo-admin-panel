@@ -1,0 +1,33 @@
+.todo-list-page header {
+  text-align: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1.5rem auto;
+}
+
+.profile-board {
+  width: 27rem;
+  height: 20rem;
+  padding: 1.5rem;
+  background-color: rgb(228, 234, 255);
+  border-radius: 1rem;
+  display: flex;
+}
+
+.editing-profile-input {
+  height: 1.5rem;
+  position: absolute;
+  width: 15rem;
+  transform: translate(8.5rem);
+  min-height: 0rem;
+  padding-inline: 0.3rem;
+}
+
+.ant-form-item .ant-form-item-control-input {
+  min-height: 0rem
+}
+
+.editing-profile-form-item {
+  margin-bottom: 1.5rem;
+}

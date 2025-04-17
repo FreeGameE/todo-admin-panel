@@ -1,0 +1,16 @@
+.todo-list-page header {
+  text-align: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1.5rem auto;
+}
+
+.main-board {
+  max-width: 27rem;
+  margin: 0rem auto;
+  padding: 1.5rem;
+  background-color: rgb(228, 234, 255);
+  border-radius: 1rem;
+  display: block;
+}

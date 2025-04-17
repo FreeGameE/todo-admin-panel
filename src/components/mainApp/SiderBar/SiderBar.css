@@ -1,0 +1,25 @@
+.sider {
+  font-size: 1rem;
+  background-color: rgb(33, 54, 79);
+  width: 30vw;
+}
+
+.sider-link {
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.sider-link:hover {
+  color: rgb(106, 180, 255);
+}
+
+.slider {
+  position: absolute;
+  color: "grey";
+  background-color: rgb(224, 224, 224);
+  font-weight: bold;
+  width: max-content;
+  padding: 3px;
+  border: solid 1px grey;
+  border-radius: 4px;
+}

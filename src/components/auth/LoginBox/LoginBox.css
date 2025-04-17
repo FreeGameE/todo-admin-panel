@@ -1,0 +1,15 @@
+.login-box {
+  width: calc(420/16 * 1rem);
+  max-height: calc(376/16 * 1rem);
+  transform: translateY(-50%);
+  margin-top: calc(287/16 * 1rem);
+  margin-left: calc(10px);
+}
+
+.login-box p {
+  margin: 0px;
+}
+
+.login-box-heading {
+  margin-bottom: calc(32/16 * 1rem);
+}
