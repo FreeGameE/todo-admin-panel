@@ -26,15 +26,8 @@ export interface Profile {
   phoneNumber: string;
 }
 
-export interface ProfileRequest {
-  username: string;
-  email: string;
-  phoneNumber: string;
-}
+export type ProfileRequest = Partial<Pick<Profile, 'username' | 'email' | 'phoneNumber'>>;
 
-export interface PasswordRequest {
-  password: string;
-}
 
 export interface Token {
   access: string;

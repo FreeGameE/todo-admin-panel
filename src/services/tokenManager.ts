@@ -1,9 +1,17 @@
-let accesToken: string | null = null;
+class TokenManager {
+  #accessToken: string | null = null;
 
-export const tokenManager = {
-  setToken: (token: string) => {
-    accesToken = token;
-  },
-  getToken: () => accesToken,
-  clearToken: () => {accesToken = null}
+  setToken(token: string) {
+    this.#accessToken = token;
+  }
+
+  getToken(): string | null {
+    return this.#accessToken;
+  }
+
+  clearToken() {
+    this.#accessToken = null;
+  }
 }
+
+export const tokenManager = new TokenManager();

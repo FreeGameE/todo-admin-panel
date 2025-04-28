@@ -1,19 +1,27 @@
 import { Image, Layout, Typography } from "antd";
-import React from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import LoginBox from "../LoginBox/LoginBox";
 import RegistrationBox from "../RegistrationBox/RegistrationBox";
 import RegistrationCompletedBox from "../RegistrationCompletedBox/RegistrationCompletedBox";
 import "./AuthPage.css";
 import ForgotPasswordBox from "../ForgotPasswordBox/ForgotPasswordBox";
-// import { useSelector } from "react-redux";
-// import { RootState } from "../../../store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 const { Content, Sider } = Layout;
 
 const AuthPage: React.FC = () => {
-  // const accessToken = useSelector((state: RootState) => state.auth.accessToken);
   const location = useLocation();
+
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   let formComponent;
   switch (location.pathname) {

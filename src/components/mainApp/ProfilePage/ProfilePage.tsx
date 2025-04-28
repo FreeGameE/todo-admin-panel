@@ -12,11 +12,7 @@ import {
 } from "../../../api/authApi";
 import { tokenManager } from "../../../services/tokenManager";
 
-type profilePageProps = {
-  checkAuth: () => Promise<void>;
-};
-
-const ProfilePage: React.FC<profilePageProps> = ({ checkAuth }) => {
+const ProfilePage: React.FC = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [profileConflictStatus, setProfileConflictStatus] =
     useState<boolean>(false);
@@ -36,10 +32,18 @@ const ProfilePage: React.FC<profilePageProps> = ({ checkAuth }) => {
       }
   };
 
+  const checkRefreshToken = useCallback(() => {
+    if (!localStorage.getItem("refreshToken")) {
+      dispatch(authStatusChange(false));
+    }
+  }, [dispatch]);
+
   const initUserProfile = useCallback(async () => {
+    checkRefreshToken();
     let retryCount: number = 0;
-    await checkAuth();
-    if (retryCount < 2) {             //защита от бесконечного цикла при отсутствии соединения
+    // await checkAuth();
+    if (retryCount < 2) {
+      //защита от бесконечного цикла при отсутствии соединения
       if (tokenManager.getToken()) {
         try {
           const response = await getUserProfile();
@@ -51,7 +55,7 @@ const ProfilePage: React.FC<profilePageProps> = ({ checkAuth }) => {
       }
       retryCount++;
     }
-  }, [checkAuth]);
+  }, [checkRefreshToken]);
 
   const onFinish = async (values: any) => {
     const newUserPrifileData: ProfileRequest = {
@@ -61,7 +65,7 @@ const ProfilePage: React.FC<profilePageProps> = ({ checkAuth }) => {
     };
 
     try {
-      await checkAuth();
+      // await checkAuth();
       await putUserProfile(newUserPrifileData);
       setIsEditing(false);
       setProfileConflictStatus(false);

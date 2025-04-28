@@ -1,5 +1,5 @@
 import { Button, Flex, Form, Input, Typography } from "antd";
-import { newUser } from "../../../api/authApi";
+import { registrationUser } from "../../../api/authApi";
 import { UserRegistration } from "../../../types/auth";
 import "./RegistrationBox.css";
 import { useNavigate } from "react-router-dom";
@@ -10,16 +10,10 @@ const RegistrationBox: React.FC = () => {
   const [isExistingUser, setIsExistingUser] = useState<boolean>(false);
 
   const onFinish = async (values: any) => {
-    const registrationData: UserRegistration = {
-      username: values.username,
-      login: values.login,
-      password: values.password,
-      email: values.email,
-      phoneNumber: values.phone,
-    };
+    const registrationData: UserRegistration = values;
 
     try {
-      const userData = await newUser(registrationData);
+      const userData = await registrationUser(registrationData);
       navigate("/register-success");
       console.log(userData);
       alert("Регистрация успешна!");
@@ -142,11 +136,11 @@ const RegistrationBox: React.FC = () => {
         <Form.Item
           label="Телефон"
           layout="vertical"
-          name="phone"
+          name="phoneNumber"
           validateTrigger="onChange"
           rules={[
             {
-              pattern: /^[+]?[0-9]{11}$/,
+              pattern: /^\+[1-9]\d{9,14}$/,
               message: "Введите корректный номер телефона",
             },
           ]}
