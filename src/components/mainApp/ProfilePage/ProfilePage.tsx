@@ -41,7 +41,6 @@ const ProfilePage: React.FC = () => {
   const initUserProfile = useCallback(async () => {
     checkRefreshToken();
     let retryCount: number = 0;
-    // await checkAuth();
     if (retryCount < 2) {
       //защита от бесконечного цикла при отсутствии соединения
       if (tokenManager.getToken()) {
@@ -65,7 +64,6 @@ const ProfilePage: React.FC = () => {
     };
 
     try {
-      // await checkAuth();
       await putUserProfile(newUserPrifileData);
       setIsEditing(false);
       setProfileConflictStatus(false);

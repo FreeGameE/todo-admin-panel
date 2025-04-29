@@ -2,20 +2,18 @@ import { Divider, Flex, Image, Typography } from "antd";
 import { Link } from "react-router-dom";
 import Sider from "antd/es/layout/Sider";
 import "./SiderBar.css";
-import {
-  ProfileOutlined,
-  UserOutlined,
-  // LeftOutlined,
-  // RightOutlined,
-} from "@ant-design/icons";
+import { ProfileOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { Roles } from "../../../types/users";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 const SiderBar: React.FC = () => {
+  const finalUserRoles = useSelector(
+    (state: RootState) => state.userRole.roles
+  );
+
   return (
     <Sider width={"15rem"} className="sider">
-      {/* <Flex className="slider">
-        <LeftOutlined style={{ margin: "0px" }} />
-        <RightOutlined style={{ margin: "0px" }} />
-      </Flex> */}
       <Link to="/">
         <Flex justify="center" style={{ marginTop: "1rem" }}>
           <Image
@@ -37,6 +35,11 @@ const SiderBar: React.FC = () => {
         <Link className="sider-link" to="/profile">
           <UserOutlined /> Личный кабинет
         </Link>
+        {finalUserRoles.includes(Roles.ADMIN) ? (
+          <Link className="sider-link" to="/users">
+            <TeamOutlined /> Пользователи
+          </Link>
+        ) : undefined}
       </Flex>
     </Sider>
   );
