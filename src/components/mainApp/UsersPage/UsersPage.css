@@ -15,13 +15,16 @@
   padding-inline: 1rem;
   width: 100%;
   border-left: 1px solid #ccc;
+  position: relative
 }
 
 .table-header:last-child {
   border-right: 1px solid #ccc;
 }
 
-.header-text {
-  text-align: center;
-  margin-right: 8px; 
+.table-header-button {
+  padding: 0;
+  height: auto;
+  position: absolute;
+  right: 0px;
 }

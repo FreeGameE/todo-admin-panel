@@ -1,9 +1,14 @@
 import { Button, Flex, Typography } from "antd";
 import "./UsersPage.css";
 import UsersList from "../UsersList/UsersList";
-import { ArrowUpOutlined } from "@ant-design/icons";
+import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { MetaResponse, User, UserFilters } from "../../../types/users";
+import {
+  MetaResponse,
+  User,
+  UserFilters,
+  SortOrder,
+} from "../../../types/users";
 import { getUsers } from "../../../api/usersApi";
 
 const UsersPage: React.FC = () => {
@@ -16,16 +21,40 @@ const UsersPage: React.FC = () => {
     limit: 10,
     offset: 0,
   });
+  const [usernameSortOrder, setUsernameSortOrder] = useState<SortOrder>("asc");
+  const [emailSortOrder, setEmailSortOrder] = useState<SortOrder>("asc");
 
-  const loadUsersList = async () => {
+  const toggleUsernameSortOrder = async () => {
+    const newUserFilters: UserFilters = {
+      ...userFilters,
+      sortOrder: usernameSortOrder === "asc" ? "desc" : "asc",
+      sortBy: "username",
+    };
+    setUserFilters(newUserFilters);
+    setUsernameSortOrder(usernameSortOrder === "asc" ? "desc" : "asc");
+    loadUsersList(newUserFilters);
+  };
+
+  const toggleEmailSortOrder = async () => {
+    const newUserFilters: UserFilters = {
+      ...userFilters,
+      sortOrder: emailSortOrder === "asc" ? "desc" : "asc",
+      sortBy: "email",
+    };
+    setUserFilters(newUserFilters);
+    setEmailSortOrder(emailSortOrder === "asc" ? "desc" : "asc");
+    loadUsersList(newUserFilters);
+  };
+
+  const loadUsersList = async (filters: UserFilters) => {
     try {
-      const response = await getUsers(userFilters);
+      const response = await getUsers(filters);
       setUsersData(response.data);
     } catch (error) {}
   };
 
   useEffect(() => {
-    loadUsersList();
+    loadUsersList(userFilters);
   }, []);
   return (
     <Flex vertical align="center">
@@ -39,27 +68,46 @@ const UsersPage: React.FC = () => {
         <Flex
           style={{
             fontWeight: 600,
-            // padding: "8px 0",
             borderBottom: "1px solid #ccc",
           }}
         >
-          <Typography className="table-header" style={{position: "relative"}}>
-            <Typography className="header-text">Имя</Typography>
+          <Typography className="table-header">
+            <Typography>Имя</Typography>
             <Button
-              style={{
-                padding: 0,
-                height: "auto",
-              }}
-              // form={`change${todo.id}`}
-              // className="accept-Button"
-              htmlType="submit"
+              className="table-header-button"
+              htmlType="button"
+              onClick={toggleUsernameSortOrder}
               color="default"
               variant="link"
-              icon={<ArrowUpOutlined />}
+              icon={
+                usernameSortOrder === "asc" ? (
+                  <ArrowUpOutlined />
+                ) : (
+                  <ArrowDownOutlined />
+                )
+              }
             ></Button>
           </Typography>
 
-          <Typography className="table-header">Email</Typography>
+          <Typography className="table-header">
+            <Typography>Email</Typography>
+            <Button
+              className="table-header-button"
+              // form={`change${todo.id}`}
+              // className="accept-Button"
+              htmlType="button"
+              onClick={toggleEmailSortOrder}
+              color="green"
+              variant="link"
+              icon={
+                emailSortOrder === "asc" ? (
+                  <ArrowUpOutlined />
+                ) : (
+                  <ArrowDownOutlined />
+                )
+              }
+            ></Button>
+          </Typography>
           <Typography className="table-header">Дата регистрации</Typography>
           <Typography className="table-header">Статус блокировки</Typography>
           <Typography className="table-header">Роль</Typography>

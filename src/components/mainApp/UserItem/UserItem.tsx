@@ -36,7 +36,7 @@ const UserItem: React.FC<User> = ({
       )}
 
       <Flex className="table-row">
-        <Typography>{roles.join(", ")}</Typography>
+        <Typography>{roles?.join(", ") || ""}</Typography>
       </Flex>
       <Typography className="table-row">{phoneNumber}</Typography>
     </Flex>

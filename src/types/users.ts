@@ -41,6 +41,8 @@ export interface UserRequest {
   phoneNumber?: string;
 }
 
+export type SortOrder = "asc" | "desc" | "none";
+
 export enum Roles {
   ADMIN = "ADMIN",
   MODERATOR = "MODERATOR",
