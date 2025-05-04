@@ -1,7 +1,10 @@
 import { Button, Flex, Typography } from "antd";
 import "./UsersPage.css";
 import UsersList from "../UsersList/UsersList";
-import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+import {
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import {
   MetaResponse,
@@ -10,6 +13,7 @@ import {
   SortOrder,
 } from "../../../types/users";
 import { getUsers } from "../../../api/usersApi";
+import UsersPagePagination from "../UsersPagePagination/UsersPagePagination";
 
 const UsersPage: React.FC = () => {
   const [usersData, setUsersData] = useState<MetaResponse<User> | null>(null);
@@ -18,11 +22,14 @@ const UsersPage: React.FC = () => {
     sortBy: "date",
     sortOrder: "asc",
     isBlocked: undefined,
-    limit: 10,
+    limit: 20,
     offset: 0,
   });
   const [usernameSortOrder, setUsernameSortOrder] = useState<SortOrder>("asc");
   const [emailSortOrder, setEmailSortOrder] = useState<SortOrder>("asc");
+  const [currentSortBy, setCurrentSortBy] = useState<"username" | "email">(
+    "username"
+  );
 
   const toggleUsernameSortOrder = async () => {
     const newUserFilters: UserFilters = {
@@ -32,6 +39,7 @@ const UsersPage: React.FC = () => {
     };
     setUserFilters(newUserFilters);
     setUsernameSortOrder(usernameSortOrder === "asc" ? "desc" : "asc");
+    setCurrentSortBy("username");
     loadUsersList(newUserFilters);
   };
 
@@ -43,6 +51,7 @@ const UsersPage: React.FC = () => {
     };
     setUserFilters(newUserFilters);
     setEmailSortOrder(emailSortOrder === "asc" ? "desc" : "asc");
+    setCurrentSortBy("email");
     loadUsersList(newUserFilters);
   };
 
@@ -72,7 +81,11 @@ const UsersPage: React.FC = () => {
           }}
         >
           <Typography className="table-header">
-            <Typography>Имя</Typography>
+            <Typography.Text
+              type={currentSortBy === "username" ? "success" : undefined}
+            >
+              Имя
+            </Typography.Text>
             <Button
               className="table-header-button"
               htmlType="button"
@@ -86,18 +99,22 @@ const UsersPage: React.FC = () => {
                   <ArrowDownOutlined />
                 )
               }
-            ></Button>
+            />
           </Typography>
 
           <Typography className="table-header">
-            <Typography>Email</Typography>
+            <Typography.Text
+              type={currentSortBy === "email" ? "success" : undefined}
+            >
+              Email
+            </Typography.Text>
             <Button
               className="table-header-button"
               // form={`change${todo.id}`}
               // className="accept-Button"
               htmlType="button"
               onClick={toggleEmailSortOrder}
-              color="green"
+              color="default"
               variant="link"
               icon={
                 emailSortOrder === "asc" ? (
@@ -106,7 +123,7 @@ const UsersPage: React.FC = () => {
                   <ArrowDownOutlined />
                 )
               }
-            ></Button>
+            />
           </Typography>
           <Typography className="table-header">Дата регистрации</Typography>
           <Typography className="table-header">Статус блокировки</Typography>
@@ -114,6 +131,9 @@ const UsersPage: React.FC = () => {
           <Typography className="table-header">Номер телефона</Typography>
         </Flex>
         <UsersList usersData={usersData} />
+        {Number(usersData?.meta.totalAmount) > 20 ? (
+          <UsersPagePagination usersData={usersData} userFilters={userFilters} />
+        ) : undefined}
       </Flex>
     </Flex>
   );
