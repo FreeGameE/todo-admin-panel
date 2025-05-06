@@ -1,10 +1,7 @@
 import { Button, Flex, Typography } from "antd";
 import "./UsersPage.css";
 import UsersList from "../UsersList/UsersList";
-import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-} from "@ant-design/icons";
+import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import {
   MetaResponse,
@@ -29,6 +26,10 @@ const UsersPage: React.FC = () => {
   const [emailSortOrder, setEmailSortOrder] = useState<SortOrder>("asc");
   const [currentSortBy, setCurrentSortBy] = useState<"username" | "email">(
     "username"
+  );
+  const usersCount = 20;
+  let pageCount = Math.ceil(
+    Number(usersData?.meta.totalAmount) / usersCount
   );
 
   const toggleUsernameSortOrder = async () => {
@@ -59,12 +60,29 @@ const UsersPage: React.FC = () => {
     try {
       const response = await getUsers(filters);
       setUsersData(response.data);
+      getVisiblePagesList();
     } catch (error) {}
   };
 
   useEffect(() => {
     loadUsersList(userFilters);
   }, []);
+
+  const getVisiblePagesList = () => {
+    const pageList:number[]=[]
+    const range = 3;
+    const currentPageNumber = Number(userFilters.offset) + 1;
+    pageCount = Math.ceil(
+      Number(usersData?.meta.totalAmount) / usersCount
+    );
+    const start = Math.max(1, currentPageNumber - range);
+    const end = Math.min(pageCount, currentPageNumber + range);
+    for (let i = start; i <= end; i++) {
+      pageList.push(i);
+    }
+    return(pageList)
+  };
+
   return (
     <Flex vertical align="center">
       <Typography.Title
@@ -132,7 +150,14 @@ const UsersPage: React.FC = () => {
         </Flex>
         <UsersList usersData={usersData} />
         {Number(usersData?.meta.totalAmount) > 20 ? (
-          <UsersPagePagination usersData={usersData} userFilters={userFilters} />
+          <UsersPagePagination
+            usersData={usersData}
+            userFilters={userFilters}
+            setUserFilters={setUserFilters}
+            getVisiblePagesList={getVisiblePagesList}
+            loadUsersList={loadUsersList}
+            pageCount={pageCount}
+          />
         ) : undefined}
       </Flex>
     </Flex>
