@@ -13,10 +13,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-inline: 1rem;
+  /* padding-inline: 1rem; */
   width: 100%;
   border-left: 1px solid #ccc;
-  position: relative
+  border-top: 1px solid #ccc;
+  position: relative;
+  flex: 1
 }
 
 .table-header:last-child {

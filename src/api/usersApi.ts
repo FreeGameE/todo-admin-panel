@@ -80,7 +80,7 @@ export const unbanUser = async (id: number) => {
 
 export const deleteUser = async (id: number) => {
   try {
-    const response = await api.delete(`/admin/users/{id}`);
+    const response = await api.delete(`/admin/users/${id}`);
     return response;
   } catch (error: any) {
     throw error;

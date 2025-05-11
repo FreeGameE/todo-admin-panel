@@ -1,7 +1,5 @@
 .table-row {
   text-align: center;
-  padding-inline: 1rem;
-  padding-block: 0.25rem;
   flex: 1;
   border-left: 1px solid #ccc;
   display: flex;

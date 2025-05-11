@@ -11,6 +11,7 @@ import {
 } from "../../../types/users";
 import { getUsers } from "../../../api/usersApi";
 import UsersPagePagination from "../UsersPagePagination/UsersPagePagination";
+import UsersPageSearch from "../UsersPageSearch/UsersPageSearch";
 
 const UsersPage: React.FC = () => {
   const [usersData, setUsersData] = useState<MetaResponse<User> | null>(null);
@@ -27,10 +28,9 @@ const UsersPage: React.FC = () => {
   const [currentSortBy, setCurrentSortBy] = useState<"username" | "email">(
     "username"
   );
+  const [isUsersFound, setIsUsersFound] = useState<boolean>(true);
   const usersCount = 20;
-  let pageCount = Math.ceil(
-    Number(usersData?.meta.totalAmount) / usersCount
-  );
+  let pageCount = Math.ceil(Number(usersData?.meta.totalAmount) / usersCount);
 
   const toggleUsernameSortOrder = async () => {
     const newUserFilters: UserFilters = {
@@ -59,8 +59,13 @@ const UsersPage: React.FC = () => {
   const loadUsersList = async (filters: UserFilters) => {
     try {
       const response = await getUsers(filters);
-      setUsersData(response.data);
-      getVisiblePagesList();
+      if (response.data.data) {
+        setUsersData(response.data);
+        getVisiblePagesList();
+        setIsUsersFound(true);
+      } else {
+        setIsUsersFound(false);
+      }
     } catch (error) {}
   };
 
@@ -69,18 +74,16 @@ const UsersPage: React.FC = () => {
   }, []);
 
   const getVisiblePagesList = () => {
-    const pageList:number[]=[]
+    const pageList: number[] = [];
     const range = 3;
     const currentPageNumber = Number(userFilters.offset) + 1;
-    pageCount = Math.ceil(
-      Number(usersData?.meta.totalAmount) / usersCount
-    );
+    pageCount = Math.ceil(Number(usersData?.meta.totalAmount) / usersCount);
     const start = Math.max(1, currentPageNumber - range);
     const end = Math.min(pageCount, currentPageNumber + range);
     for (let i = start; i <= end; i++) {
       pageList.push(i);
     }
-    return(pageList)
+    return pageList;
   };
 
   return (
@@ -92,72 +95,95 @@ const UsersPage: React.FC = () => {
         ПОЛЬЗОВАТЕЛИ
       </Typography.Title>
       <Flex vertical className="users-board">
-        <Flex
-          style={{
-            fontWeight: 600,
-            borderBottom: "1px solid #ccc",
-          }}
-        >
-          <Typography className="table-header">
-            <Typography.Text
-              type={currentSortBy === "username" ? "success" : undefined}
+        <UsersPageSearch
+          usersData={usersData}
+          userFilters={userFilters}
+          setUserFilters={setUserFilters}
+          loadUsersList={loadUsersList}
+          isUsersFound={isUsersFound}
+        />
+        {isUsersFound ? (
+          <Flex vertical>
+            <Flex
+              style={{
+                fontWeight: 600,
+                borderBottom: "1px solid #ccc",
+              }}
             >
-              Имя
-            </Typography.Text>
-            <Button
-              className="table-header-button"
-              htmlType="button"
-              onClick={toggleUsernameSortOrder}
-              color="default"
-              variant="link"
-              icon={
-                usernameSortOrder === "asc" ? (
-                  <ArrowUpOutlined />
-                ) : (
-                  <ArrowDownOutlined />
-                )
-              }
-            />
-          </Typography>
+              <Typography
+                className="table-header"
+                // style={{ paddingInline: "0rem" }}
+              >
+                <Typography.Text
+                  type={currentSortBy === "username" ? "success" : undefined}
+                >
+                  Имя
+                </Typography.Text>
+                <Button
+                  className="table-header-button"
+                  htmlType="button"
+                  onClick={toggleUsernameSortOrder}
+                  color="default"
+                  variant="link"
+                  icon={
+                    usernameSortOrder === "asc" ? (
+                      <ArrowUpOutlined />
+                    ) : (
+                      <ArrowDownOutlined />
+                    )
+                  }
+                />
+              </Typography>
 
-          <Typography className="table-header">
-            <Typography.Text
-              type={currentSortBy === "email" ? "success" : undefined}
-            >
-              Email
-            </Typography.Text>
-            <Button
-              className="table-header-button"
-              // form={`change${todo.id}`}
-              // className="accept-Button"
-              htmlType="button"
-              onClick={toggleEmailSortOrder}
-              color="default"
-              variant="link"
-              icon={
-                emailSortOrder === "asc" ? (
-                  <ArrowUpOutlined />
-                ) : (
-                  <ArrowDownOutlined />
-                )
-              }
+              <Typography className="table-header">
+                <Typography.Text
+                  type={currentSortBy === "email" ? "success" : undefined}
+                >
+                  Email
+                </Typography.Text>
+                <Button
+                  className="table-header-button"
+                  // form={`change${todo.id}`}
+                  htmlType="button"
+                  onClick={toggleEmailSortOrder}
+                  color="default"
+                  variant="link"
+                  icon={
+                    emailSortOrder === "asc" ? (
+                      <ArrowUpOutlined />
+                    ) : (
+                      <ArrowDownOutlined />
+                    )
+                  }
+                />
+              </Typography>
+              <Typography className="table-header" >
+                Дата регистрации
+              </Typography>
+              <Typography className="table-header" >
+                Статус блокировки
+              </Typography>
+              <Typography className="table-header">Роль</Typography>
+              <Typography className="table-header" >
+                Номер телефона
+              </Typography>
+            </Flex>
+            <UsersList
+              usersData={usersData}
+              loadUsersList={loadUsersList}
+              userFilters={userFilters}
             />
-          </Typography>
-          <Typography className="table-header">Дата регистрации</Typography>
-          <Typography className="table-header">Статус блокировки</Typography>
-          <Typography className="table-header">Роль</Typography>
-          <Typography className="table-header">Номер телефона</Typography>
-        </Flex>
-        <UsersList usersData={usersData} />
-        {Number(usersData?.meta.totalAmount) > 20 ? (
-          <UsersPagePagination
-            usersData={usersData}
-            userFilters={userFilters}
-            setUserFilters={setUserFilters}
-            getVisiblePagesList={getVisiblePagesList}
-            loadUsersList={loadUsersList}
-            pageCount={pageCount}
-          />
+            {Number(usersData?.meta.totalAmount) > 20 ? (
+              <UsersPagePagination
+                usersData={usersData}
+                userFilters={userFilters}
+                setUserFilters={setUserFilters}
+                getVisiblePagesList={getVisiblePagesList}
+                loadUsersList={loadUsersList}
+                pageCount={pageCount}
+              />
+            ) : undefined}
+          </Flex>
         ) : undefined}
       </Flex>
     </Flex>
