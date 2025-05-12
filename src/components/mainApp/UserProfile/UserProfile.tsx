@@ -1,11 +1,12 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { Button, Flex, Form, Input, Typography } from "antd";
 import "./UserProfile.css";
 import { User, UserRequest } from "../../../types/users";
 import { getManagedUserProfile, updateUserData } from "../../../api/usersApi";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { authStatusChange } from "../../../store/authSlice";
 
 const UserProfile: React.FC = () => {
   const [userData, setUserData] = useState<User>();
@@ -13,14 +14,22 @@ const UserProfile: React.FC = () => {
   const [profileConflictStatus, setProfileConflictStatus] =
     useState<boolean>(false);
   const selectedUserId = useSelector((state: RootState) => state.selectedUser);
+  const dispatch = useDispatch();
 
-  const loadUserProfile = async () => {
+  const checkRefreshToken = useCallback(() => {
+    if (!localStorage.getItem("refreshToken")) {
+      dispatch(authStatusChange(false));
+    }
+  }, [dispatch]);
+
+  const loadUserProfile = useCallback(async () => {
+    checkRefreshToken();
     try {
       const response = await getManagedUserProfile(selectedUserId);
       console.log("start");
       setUserData(response.data);
     } catch (error) {}
-  };
+  }, [checkRefreshToken, selectedUserId]);
 
   const onFinish = async (values: any) => {
     const newUserData: UserRequest = {
@@ -46,7 +55,7 @@ const UserProfile: React.FC = () => {
 
   useEffect(() => {
     loadUserProfile();
-  }, []);
+  }, [loadUserProfile]);
 
   return (
     <>

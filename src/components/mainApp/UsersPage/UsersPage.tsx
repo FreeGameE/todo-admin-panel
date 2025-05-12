@@ -2,7 +2,7 @@ import { Button, Flex, Typography } from "antd";
 import "./UsersPage.css";
 import UsersList from "../UsersList/UsersList";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MetaResponse,
   User,
@@ -13,8 +13,9 @@ import {
 import { getUsers } from "../../../api/usersApi";
 import UsersPagePagination from "../UsersPagePagination/UsersPagePagination";
 import UsersPageSearch from "../UsersPageSearch/UsersPageSearch";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
+import { authStatusChange } from "../../../store/authSlice";
 
 const UsersPage: React.FC = () => {
   const [usersData, setUsersData] = useState<MetaResponse<User> | null>(null);
@@ -32,13 +33,22 @@ const UsersPage: React.FC = () => {
     "username"
   );
   const [isUsersFound, setIsUsersFound] = useState<boolean>(true);
-  const usersCount = 20;
 
   const finalUserRoles = useSelector(
     (state: RootState) => state.userRole.roles
   );
 
-  let pageCount = Math.ceil(Number(usersData?.meta.totalAmount) / usersCount);
+  const usersCount = 20;
+  let pageCount = useMemo(() => {
+    return Math.ceil(Number(usersData?.meta.totalAmount) / usersCount);
+  }, [usersData?.meta.totalAmount, usersCount]);
+  const dispatch = useDispatch();
+
+  const checkRefreshToken = useCallback(() => {
+    if (!localStorage.getItem("refreshToken")) {
+      dispatch(authStatusChange(false));
+    }
+  }, [dispatch]);
 
   const toggleUsernameSortOrder = async () => {
     const newUserFilters: UserFilters = {
@@ -73,35 +83,38 @@ const UsersPage: React.FC = () => {
     loadUsersList(newUserFilters);
   };
 
-  const loadUsersList = async (filters: UserFilters) => {
-    try {
-      const response = await getUsers(filters);
-      if (response.data.data) {
-        setUsersData(response.data);
-        getVisiblePagesList();
-        setIsUsersFound(true);
-      } else {
-        setIsUsersFound(false);
-      }
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    loadUsersList(userFilters);
-  }, []);
-
-  const getVisiblePagesList = () => {
+  const getVisiblePagesList = useCallback(() => {
     const pageList: number[] = [];
     const range = 3;
     const currentPageNumber = Number(userFilters.offset) + 1;
-    pageCount = Math.ceil(Number(usersData?.meta.totalAmount) / usersCount);
+    
     const start = Math.max(1, currentPageNumber - range);
     const end = Math.min(pageCount, currentPageNumber + range);
     for (let i = start; i <= end; i++) {
       pageList.push(i);
     }
     return pageList;
-  };
+  }, [userFilters.offset, pageCount]);
+
+  const loadUsersList = useCallback(
+    async (filters: UserFilters) => {
+      checkRefreshToken();
+      try {
+        const response = await getUsers(filters);
+        if (response.data.data) {
+          setUsersData(response.data);
+          getVisiblePagesList();
+          setIsUsersFound(true);
+        } else {
+          setIsUsersFound(false);
+        }
+      } catch (error) {}
+    },
+    [checkRefreshToken, getVisiblePagesList]
+  );
+  useEffect(() => {
+    loadUsersList(userFilters);
+  }, [loadUsersList, userFilters]);
 
   return (
     <Flex vertical align="center">

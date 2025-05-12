@@ -15,6 +15,16 @@ const MainLayout = () => {
     (state: RootState) => state.userRole.roles
   );
 
+  const initUserRole = useCallback( async () => {
+    try {
+      console.log("Получение данных профиля...");
+      const response = await getUserProfile();
+      console.log("Данные профиля получены");
+      const roles = response.roles;
+      dispatch(userRoleChange(roles));
+    } catch {}
+  }, [dispatch])
+
   const checkAuth = useCallback(async () => {
     try {
       await refreshAccessToken();
@@ -25,17 +35,7 @@ const MainLayout = () => {
         dispatch(authStatusChange(false));
       }
     }
-  }, [dispatch]);
-
-  const initUserRole = async () => {
-    try {
-      console.log("Получение данных профиля...");
-      const response = await getUserProfile();
-      console.log("Данные профиля получены");
-      const roles = response.roles;
-      dispatch(userRoleChange(roles));
-    } catch {}
-  };
+  }, [dispatch, initUserRole]);
 
   useEffect(() => {
     checkAuth();

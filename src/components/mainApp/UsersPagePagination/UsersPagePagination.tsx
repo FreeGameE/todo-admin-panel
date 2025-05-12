@@ -1,4 +1,4 @@
-import { Button, Flex, Typography } from "antd";
+import { Button, Flex } from "antd";
 import { MetaResponse, User, UserFilters } from "../../../types/users";
 import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons";
 import "./UsersPagePagination.css";

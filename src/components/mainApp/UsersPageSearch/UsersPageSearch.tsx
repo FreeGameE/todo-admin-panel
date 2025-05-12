@@ -1,4 +1,4 @@
-import { Flex, Form, Input, Typography } from "antd";
+import { Flex, Form, Input } from "antd";
 import { MetaResponse, User, UserFilters } from "../../../types/users";
 
 type UsersPageSearchProps = {

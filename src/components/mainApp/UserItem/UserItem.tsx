@@ -3,7 +3,6 @@ import {
   Roles,
   User,
   UserFilters,
-  UserRolesRequest,
 } from "../../../types/users";
 import "./UserItem.css";
 import {
