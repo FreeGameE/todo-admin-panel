@@ -35,7 +35,7 @@ const SiderBar: React.FC = () => {
         <Link className="sider-link" to="/profile">
           <UserOutlined /> Личный кабинет
         </Link>
-        {finalUserRoles.includes(Roles.ADMIN) ? (
+        {finalUserRoles.includes(Roles.ADMIN || Roles.MODERATOR) ? (
           <Link className="sider-link" to="/users">
             <TeamOutlined /> Пользователи
           </Link>
