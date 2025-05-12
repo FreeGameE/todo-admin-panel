@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { Button, Flex, Form, Input, Typography } from "antd";
 import "./UserProfile.css";
-import { User, UserRequest } from "../../../types/users";
+import { Roles, User, UserRequest } from "../../../types/users";
 import { getManagedUserProfile, updateUserData } from "../../../api/usersApi";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -16,6 +16,9 @@ const UserProfile: React.FC = () => {
   const selectedUserId = useSelector((state: RootState) => state.selectedUser);
   const dispatch = useDispatch();
 
+  const finalUserRoles = useSelector(
+    (state: RootState) => state.userRole.roles
+  );
   const checkRefreshToken = useCallback(() => {
     if (!localStorage.getItem("refreshToken")) {
       dispatch(authStatusChange(false));
@@ -99,19 +102,20 @@ const UserProfile: React.FC = () => {
                       {userData?.phoneNumber || "не указано"}
                     </Typography.Text>
                   </Flex>
-
-                  <Button
-                    color="blue"
-                    variant="link"
-                    style={{
-                      width: "fit-content",
-                      height: "fit-content",
-                      padding: "0px",
-                    }}
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Редактировать
-                  </Button>
+                  {finalUserRoles.includes(Roles.ADMIN) && (
+                    <Button
+                      color="blue"
+                      variant="link"
+                      style={{
+                        width: "fit-content",
+                        height: "fit-content",
+                        padding: "0px",
+                      }}
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Редактировать
+                    </Button>
+                  )}
                 </Flex>
               </Flex>
             ) : (

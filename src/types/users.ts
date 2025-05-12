@@ -48,3 +48,5 @@ export enum Roles {
   MODERATOR = "MODERATOR",
   USER = "USER",
 }
+
+export type ActionType = "delete" | "ban" | "unban" | "roles" | null;

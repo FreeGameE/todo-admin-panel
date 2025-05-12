@@ -1,9 +1,5 @@
 import { Button, Flex, Modal, Tooltip, Typography } from "antd";
-import {
-  Roles,
-  User,
-  UserFilters,
-} from "../../../types/users";
+import { ActionType, Roles, User, UserFilters } from "../../../types/users";
 import "./UserItem.css";
 import {
   UserOutlined,
@@ -30,15 +26,13 @@ type UserItemProps = {
   userFilters: UserFilters;
 };
 
-type ActionType = "delete" | "ban" | "unban" | "roles";
-
 const UserItem: React.FC<UserItemProps> = ({
   user,
   loadUsersList,
   userFilters,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalActionType, setModalActionType] = useState<ActionType | null>(
+  const [modalActionType, setModalActionType] = useState<ActionType>(
     null
   );
   const [currentUserRoles, setCurrentUserRoles] = useState<Roles[]>([]);
@@ -50,7 +44,6 @@ const UserItem: React.FC<UserItemProps> = ({
   const { id, username, email, date, isBlocked, roles, phoneNumber } = user;
   const allRoles = Object.values(Roles);
   const dispatch = useDispatch();
-  
 
   const showModal = (action: ActionType) => {
     setModalActionType(action);
@@ -169,7 +162,8 @@ const UserItem: React.FC<UserItemProps> = ({
       >
         {/* //$ Кнопки с ролями */}
 
-        {finalUserRoles.includes(Roles.ADMIN) && modalActionType === "roles" ? (
+        {finalUserRoles.includes(Roles.ADMIN || Roles.MODERATOR) &&
+        modalActionType === "roles" ? (
           <Flex gap="0.3rem" wrap="wrap">
             {currentUserRoles.map((role) => (
               <Button
