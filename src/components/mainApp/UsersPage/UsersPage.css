@@ -31,3 +31,7 @@
   position: absolute;
   right: 0px;
 }
+
+.user-status-filter-button{
+  margin-inline: 0rem;
+}

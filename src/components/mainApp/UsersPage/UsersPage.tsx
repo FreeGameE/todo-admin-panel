@@ -8,10 +8,13 @@ import {
   User,
   UserFilters,
   SortOrder,
+  Roles,
 } from "../../../types/users";
 import { getUsers } from "../../../api/usersApi";
 import UsersPagePagination from "../UsersPagePagination/UsersPagePagination";
 import UsersPageSearch from "../UsersPageSearch/UsersPageSearch";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 const UsersPage: React.FC = () => {
   const [usersData, setUsersData] = useState<MetaResponse<User> | null>(null);
@@ -30,6 +33,11 @@ const UsersPage: React.FC = () => {
   );
   const [isUsersFound, setIsUsersFound] = useState<boolean>(true);
   const usersCount = 20;
+
+  const finalUserRoles = useSelector(
+    (state: RootState) => state.userRole.roles
+  );
+
   let pageCount = Math.ceil(Number(usersData?.meta.totalAmount) / usersCount);
 
   const toggleUsernameSortOrder = async () => {
@@ -53,6 +61,15 @@ const UsersPage: React.FC = () => {
     setUserFilters(newUserFilters);
     setEmailSortOrder(emailSortOrder === "asc" ? "desc" : "asc");
     setCurrentSortBy("email");
+    loadUsersList(newUserFilters);
+  };
+
+  const toggleStatusFilter = async (status: boolean | undefined) => {
+    const newUserFilters: UserFilters = {
+      ...userFilters,
+      isBlocked: status,
+    };
+    setUserFilters(newUserFilters);
     loadUsersList(newUserFilters);
   };
 
@@ -102,6 +119,37 @@ const UsersPage: React.FC = () => {
           loadUsersList={loadUsersList}
           isUsersFound={isUsersFound}
         />
+        {finalUserRoles.includes(Roles.ADMIN) && (
+          <Flex align="center" style={{ marginBottom: "0.3rem" }}>
+            <Button
+              onClick={() => toggleStatusFilter(undefined)}
+              variant="link"
+              color="blue"
+              className="user-status-filter-button"
+            >
+              Все пользователи
+            </Button>
+            <Typography.Text>/</Typography.Text>
+            <Button
+              onClick={() => toggleStatusFilter(true)}
+              variant="link"
+              color="blue"
+              className="user-status-filter-button"
+            >
+              Заблокированные
+            </Button>
+            <Typography.Text>/</Typography.Text>
+            <Button
+              onClick={() => toggleStatusFilter(false)}
+              variant="link"
+              color="blue"
+              className="user-status-filter-button"
+            >
+              Активные
+            </Button>
+          </Flex>
+        )}
+
         {isUsersFound ? (
           <Flex vertical>
             <Flex
@@ -110,10 +158,7 @@ const UsersPage: React.FC = () => {
                 borderBottom: "1px solid #ccc",
               }}
             >
-              <Typography
-                className="table-header"
-                // style={{ paddingInline: "0rem" }}
-              >
+              <Typography className="table-header">
                 <Typography.Text
                   type={currentSortBy === "username" ? "success" : undefined}
                 >
@@ -157,16 +202,12 @@ const UsersPage: React.FC = () => {
                   }
                 />
               </Typography>
-              <Typography className="table-header" >
-                Дата регистрации
-              </Typography>
-              <Typography className="table-header" >
+              <Typography className="table-header">Дата регистрации</Typography>
+              <Typography className="table-header">
                 Статус блокировки
               </Typography>
               <Typography className="table-header">Роль</Typography>
-              <Typography className="table-header" >
-                Номер телефона
-              </Typography>
+              <Typography className="table-header">Номер телефона</Typography>
             </Flex>
             <UsersList
               usersData={usersData}
@@ -184,6 +225,8 @@ const UsersPage: React.FC = () => {
               />
             ) : undefined}
           </Flex>
+        ) : !isUsersFound ? (
+          <Typography>Пользователи не найдены</Typography>
         ) : undefined}
       </Flex>
     </Flex>

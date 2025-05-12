@@ -7,6 +7,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import UsersPage from "./components/mainApp/UsersPage/UsersPage";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRoute/RoleProtectedRoute";
 import { Roles } from "./types/users";
+import UserProfile from "./components/mainApp/UserProfile/UserProfile";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -30,6 +31,14 @@ export const AppRouter = createBrowserRouter([
         element: (
           <RoleProtectedRoute allowedRoles={[Roles.ADMIN, Roles.MODERATOR]}>
             <UsersPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "user-profile",
+        element: (
+          <RoleProtectedRoute allowedRoles={[Roles.ADMIN, Roles.MODERATOR]}>
+            <UserProfile />
           </RoleProtectedRoute>
         ),
       },

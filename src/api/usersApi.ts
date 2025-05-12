@@ -29,7 +29,7 @@ export const getUsers = async (userFilters: UserFilters) => {
 
 export const getManagedUserProfile = async (id: number) => {
   try {
-    const response = await api.get(`/admin/users/${id}`, { params: id });
+    const response = await api.get(`/admin/users/${id}`);
     return response;
   } catch (error: any) {
     throw error;
@@ -41,12 +41,13 @@ export const updateUserPermissions = async (
   userRolesRequest: UserRolesRequest
 ) => {
   try {
-    const response = await api.put(
+    const response = await api.post(
       `/admin/users/${id}/rights`,
       userRolesRequest
     );
     return response;
   } catch (error: any) {
+    console.error(error);
     throw error;
   }
 };

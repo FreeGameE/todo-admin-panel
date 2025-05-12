@@ -1,6 +1,5 @@
 import { Flex, Form, Input, Typography } from "antd";
 import { MetaResponse, User, UserFilters } from "../../../types/users";
-import { relative } from "path";
 
 type UsersPageSearchProps = {
   usersData: MetaResponse<User> | null;
@@ -46,9 +45,7 @@ const UsersPageSearch: React.FC<UsersPageSearchProps> = ({
         </Form.Item>
       </Form>
 
-      {!isUsersFound ? (
-        <Typography>Пользователь не найден</Typography>
-      ) : undefined}
+      
     </Flex>
   );
 };

@@ -1,11 +1,10 @@
 import { RouterProvider } from "react-router-dom";
 import { Flex, Typography } from "antd";
 import { useCallback, useEffect, useState } from "react";
-import { getUserProfile, refreshAccessToken } from "./api/authApi";
+import { refreshAccessToken } from "./api/authApi";
 import { authStatusChange } from "./store/authSlice";
 import { useDispatch } from "react-redux";
 import { AppRouter } from "./AppRouter";
-import { userRoleChange } from "./store/userRoleSlice";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(false);
