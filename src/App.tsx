@@ -12,7 +12,9 @@ function App() {
 
   const getTokens = useCallback(async () => {
     setLoading(true);
-    if (localStorage.getItem("refreshToken") !== undefined) {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (refreshToken) {
       try {
         await refreshAccessToken();
         dispatch(authStatusChange(true));
@@ -24,13 +26,12 @@ function App() {
         }
       }
     }
+
     setLoading(false);
   }, [dispatch]);
 
   useEffect(() => {
-    if (localStorage.getItem("refreshToken")) {
-      getTokens();
-    }
+    getTokens();
   }, [getTokens]);
 
   return loading ? (

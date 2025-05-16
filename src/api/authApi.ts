@@ -25,8 +25,13 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    if (401 === error.response.status && !originalRequest._retry) {
-
+    if (
+      401 === error.response.status &&
+      !originalRequest._retry &&
+      localStorage.getItem("refreshToken") !== undefined &&
+      localStorage.getItem("refreshToken") !== null
+    ) {
+      localStorage.removeItem("refreshToken");
       try {
         originalRequest._retry = true;
         const data = await refreshAccessToken();
@@ -41,7 +46,6 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-    
   }
 );
 
