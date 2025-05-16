@@ -5,6 +5,7 @@ import { refreshAccessToken } from "./api/authApi";
 import { authStatusChange } from "./store/authSlice";
 import { useDispatch } from "react-redux";
 import { AppRouter } from "./AppRouter";
+import { tokenManager } from "./services/tokenManager";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -12,13 +13,14 @@ function App() {
 
   const getTokens = useCallback(async () => {
     setLoading(true);
-    if (localStorage.getItem("refreshToken")) {
+    if (localStorage.getItem("refreshToken") !== undefined) {
       try {
         await refreshAccessToken();
         dispatch(authStatusChange(true));
       } catch (error: any) {
         console.error("Ошибка запроса:", error);
         if (error.response?.status === 401) {
+          localStorage.removeItem("refreshToken");
           dispatch(authStatusChange(false));
         }
       }
