@@ -115,6 +115,7 @@ const UsersPage: React.FC = () => {
   );
   useEffect(() => {
     loadUsersList(userFilters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
