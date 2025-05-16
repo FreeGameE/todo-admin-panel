@@ -5,7 +5,6 @@ import { refreshAccessToken } from "./api/authApi";
 import { authStatusChange } from "./store/authSlice";
 import { useDispatch } from "react-redux";
 import { AppRouter } from "./AppRouter";
-import { tokenManager } from "./services/tokenManager";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(false);
