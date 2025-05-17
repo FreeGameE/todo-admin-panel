@@ -1,4 +1,4 @@
-import { Button, Flex, Modal, Tooltip, Typography } from "antd";
+import { Button, Flex, Modal, Popconfirm, Tooltip, Typography } from "antd";
 import { ActionType, Roles, User, UserFilters } from "../../../types/users";
 import "./UserItem.css";
 import {
@@ -32,9 +32,7 @@ const UserItem: React.FC<UserItemProps> = ({
   userFilters,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalActionType, setModalActionType] = useState<ActionType>(
-    null
-  );
+  const [modalActionType, setModalActionType] = useState<ActionType>(null);
   const [currentUserRoles, setCurrentUserRoles] = useState<Roles[]>([]);
 
   const finalUserRoles = useSelector(
@@ -140,7 +138,7 @@ const UserItem: React.FC<UserItemProps> = ({
             : undefined
         }
         open={isModalOpen}
-        onOk={handleModalConfirm}
+        // onOk={handleModalConfirm}
         onCancel={handleCancel}
         okText={
           modalActionType === "delete"
@@ -152,12 +150,33 @@ const UserItem: React.FC<UserItemProps> = ({
             : "Готово"
         }
         cancelText="Отмена"
-        okButtonProps={{
-          style: {
-            // color: "white",
-            // backgroundColor: "indianred",
-          },
-        }}
+        footer={
+          <Flex gap="0.3rem" justify="flex-end">
+            <Button onClick={handleCancel}>Отмена</Button>
+            {modalActionType === "roles" ? (
+              <Popconfirm
+                title="Подтвердить изменение прав пользователя?"
+                onConfirm={handleModalConfirm}
+                okText="Да"
+                cancelText="Нет"
+              >
+                <Button type="primary" color="blue">
+                  Готово
+                </Button>
+              </Popconfirm>
+            ) : (
+              <Button type="primary" color="blue" onClick={handleModalConfirm}>
+                {modalActionType === "delete"
+                  ? "Удалить"
+                  : modalActionType === "ban"
+                  ? "Заблокировать"
+                  : modalActionType === "unban"
+                  ? "Разблокировать"
+                  : "Готово"}
+              </Button>
+            )}
+          </Flex>
+        }
         width={"20rem"}
       >
         {/* //$ Кнопки с ролями */}
@@ -188,6 +207,7 @@ const UserItem: React.FC<UserItemProps> = ({
           </Flex>
         ) : undefined}
       </Modal>
+
       <Flex className="table-row" style={{ justifyContent: "space-between" }}>
         <Tooltip title="Перейти к профилю">
           <Link to="/user-profile">

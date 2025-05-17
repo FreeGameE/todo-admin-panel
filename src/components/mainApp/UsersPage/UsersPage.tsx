@@ -78,6 +78,7 @@ const UsersPage: React.FC = () => {
     const newUserFilters: UserFilters = {
       ...userFilters,
       isBlocked: status,
+      offset: 0,
     };
     setUserFilters(newUserFilters);
     loadUsersList(newUserFilters);
@@ -87,7 +88,7 @@ const UsersPage: React.FC = () => {
     const pageList: number[] = [];
     const range = 3;
     const currentPageNumber = Number(userFilters.offset) + 1;
-    
+
     const start = Math.max(1, currentPageNumber - range);
     const end = Math.min(pageCount, currentPageNumber + range);
     for (let i = start; i <= end; i++) {
@@ -114,7 +115,8 @@ const UsersPage: React.FC = () => {
   );
   useEffect(() => {
     loadUsersList(userFilters);
-  }, [loadUsersList, userFilters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Flex vertical align="center">
@@ -139,6 +141,11 @@ const UsersPage: React.FC = () => {
               variant="link"
               color="blue"
               className="user-status-filter-button"
+              style={{
+                fontWeight: `${
+                  userFilters.isBlocked === undefined ? "bold" : "normal"
+                }`,
+              }}
             >
               Все пользователи
             </Button>
@@ -148,6 +155,11 @@ const UsersPage: React.FC = () => {
               variant="link"
               color="blue"
               className="user-status-filter-button"
+              style={{
+                fontWeight: `${
+                  userFilters.isBlocked === true ? "bold" : "normal"
+                }`,
+              }}
             >
               Заблокированные
             </Button>
@@ -157,6 +169,11 @@ const UsersPage: React.FC = () => {
               variant="link"
               color="blue"
               className="user-status-filter-button"
+              style={{
+                fontWeight: `${
+                  userFilters.isBlocked === false ? "bold" : "normal"
+                }`,
+              }}
             >
               Активные
             </Button>
@@ -201,7 +218,6 @@ const UsersPage: React.FC = () => {
                 </Typography.Text>
                 <Button
                   className="table-header-button"
-                  // form={`change${todo.id}`}
                   htmlType="button"
                   onClick={toggleEmailSortOrder}
                   color="default"
@@ -235,6 +251,7 @@ const UsersPage: React.FC = () => {
                 getVisiblePagesList={getVisiblePagesList}
                 loadUsersList={loadUsersList}
                 pageCount={pageCount}
+                key={pageCount}
               />
             ) : undefined}
           </Flex>

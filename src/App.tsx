@@ -12,24 +12,26 @@ function App() {
 
   const getTokens = useCallback(async () => {
     setLoading(true);
-    if (localStorage.getItem("refreshToken")) {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (refreshToken) {
       try {
         await refreshAccessToken();
         dispatch(authStatusChange(true));
       } catch (error: any) {
         console.error("Ошибка запроса:", error);
         if (error.response?.status === 401) {
+          localStorage.removeItem("refreshToken");
           dispatch(authStatusChange(false));
         }
       }
     }
+
     setLoading(false);
   }, [dispatch]);
 
   useEffect(() => {
-    if (localStorage.getItem("refreshToken")) {
-      getTokens();
-    }
+    getTokens();
   }, [getTokens]);
 
   return loading ? (

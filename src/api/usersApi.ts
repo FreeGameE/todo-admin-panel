@@ -1,6 +1,7 @@
 import axios from "axios";
 import { UserFilters, UserRequest, UserRolesRequest } from "../types/users";
 import { tokenManager } from "../services/tokenManager";
+import { refreshAccessToken } from "./authApi";
 
 const api = axios.create({
   baseURL: "https://easydev.club/api/v1",
@@ -17,6 +18,32 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    if (401 === error.response.status && !originalRequest._retry) {
+
+      try {
+        originalRequest._retry = true;
+        const data = await refreshAccessToken();
+        tokenManager.setToken(data.accessToken);
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${data.accessToken}`;
+        originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
+        return api(originalRequest);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }
+    return Promise.reject(error);
+    
+  }
+);
 
 export const getUsers = async (userFilters: UserFilters) => {
   try {

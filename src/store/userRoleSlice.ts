@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Roles } from "../types/users";
 
 const initialState: { roles: Roles[] } = {
-  roles: [Roles.USER],
+  roles: [],
 };
 
 const userRoleSlice = createSlice({
