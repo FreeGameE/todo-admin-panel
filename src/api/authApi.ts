@@ -20,31 +20,32 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    const isRefreshRequest = originalRequest.url.includes("/auth/refresh");
+
     if (
-      401 === error.response.status &&
+      error.response?.status === 401 &&
       !originalRequest._retry &&
-      localStorage.getItem("refreshToken") !== undefined &&
-      localStorage.getItem("refreshToken") !== null
+      !isRefreshRequest &&
+      localStorage.getItem("refreshToken")
     ) {
-      localStorage.removeItem("refreshToken");
       try {
         originalRequest._retry = true;
         const data = await refreshAccessToken();
         tokenManager.setToken(data.accessToken);
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${data.accessToken}`;
+        localStorage.setItem("refreshToken", data.refreshToken);
+
         originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
         return api(originalRequest);
-      } catch (error) {
-        return Promise.reject(error);
+      } catch (refreshError) {
+        localStorage.removeItem("refreshToken");
+        return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );

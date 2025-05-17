@@ -21,7 +21,7 @@ function App() {
       } catch (error: any) {
         console.error("Ошибка запроса:", error);
         if (error.response?.status === 401) {
-          localStorage.removeItem("refreshToken");
+          // localStorage.removeItem("refreshToken");
           dispatch(authStatusChange(false));
         }
       }
