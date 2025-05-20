@@ -4,10 +4,6 @@ import ProfilePage from "./components/mainApp/ProfilePage/ProfilePage";
 import AuthPage from "./components/auth/AuthPage/AuthPage";
 import PrivateRoute from "./components/auth/PrivateRoute/PrivateRoute";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import UsersPage from "./components/mainApp/UsersPage/UsersPage";
-import RoleProtectedRoute from "./components/auth/RoleProtectedRoute/RoleProtectedRoute";
-import { Roles } from "./types/users";
-import UserProfile from "./components/mainApp/UserProfile/UserProfile";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -25,22 +21,6 @@ export const AppRouter = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
-      },
-      {
-        path: "users",
-        element: (
-          <RoleProtectedRoute allowedRoles={[Roles.ADMIN, Roles.MODERATOR]}>
-            <UsersPage />
-          </RoleProtectedRoute>
-        ),
-      },
-      {
-        path: "user-profile",
-        element: (
-          <RoleProtectedRoute allowedRoles={[Roles.ADMIN, Roles.MODERATOR]}>
-            <UserProfile />
-          </RoleProtectedRoute>
-        ),
       },
     ],
   },

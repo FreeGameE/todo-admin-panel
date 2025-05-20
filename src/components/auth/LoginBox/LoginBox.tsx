@@ -19,7 +19,8 @@ const LoginBox: React.FC = () => {
 
     try {
       const response = await authUser(authData);
-      tokenManager.setToken(response.accessToken);
+      tokenManager.setToken(response.accessToken)
+      // localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
       setIsAuthFailed(false);
       dispatch(authStatusChange(true));
@@ -43,7 +44,7 @@ const LoginBox: React.FC = () => {
           height: "4rem",
           position: "absolute",
           bottom: "calc(-1rem)",
-          right: "9.5rem",
+          right: "9.5rem"
         }}
       />
       <Flex vertical className="login-box-heading">

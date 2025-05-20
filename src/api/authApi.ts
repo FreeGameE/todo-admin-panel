@@ -14,7 +14,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = tokenManager.getToken();
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`; 
   }
   return config;
 });
@@ -52,7 +52,7 @@ export const refreshAccessToken = async () => {
     const response = await api.post("/auth/refresh", {
       refreshToken: localStorage.getItem("refreshToken"),
     });
-    tokenManager.setToken(response.data.accessToken);
+    tokenManager.setToken(response.data.accessToken)
     localStorage.setItem("refreshToken", response.data.refreshToken);
     return response.data;
   } catch (error: any) {

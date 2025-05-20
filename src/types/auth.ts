@@ -1,3 +1,4 @@
+
 export interface UserRegistration {
   login: string;
   username: string;
@@ -21,13 +22,12 @@ export interface Profile {
   email: string;
   date: string;
   isBlocked: boolean;
-  roles: Role[];
+  isAdmin: boolean;
   phoneNumber: string;
 }
 
-export type ProfileRequest = Partial<
-  Pick<Profile, "username" | "email" | "phoneNumber">
->;
+export type ProfileRequest = Partial<Pick<Profile, 'username' | 'email' | 'phoneNumber'>>;
+
 
 export interface Token {
   access: string;
@@ -37,5 +37,3 @@ export interface Token {
 export interface AuthState {
   isAuthenticated: boolean;
 }
-
-type Role = "ADMIN" | "USER" | "MODERATOR";

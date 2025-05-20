@@ -6,8 +6,6 @@ import ChangeList from "../ChangeList/ChangeList";
 import TodoList from "../TodoList/TodoList";
 import "./TodoListPage.css";
 import { Flex, Typography } from "antd";
-import { authStatusChange } from "../../../store/authSlice";
-import { useDispatch } from "react-redux";
 
 const TodoListPage: React.FC = () => {
   const [filteredTodoStatus, setFilteredTodoStatus] = useState<Status>("all");
@@ -19,16 +17,7 @@ const TodoListPage: React.FC = () => {
     inWork: 0,
   });
 
-  const dispatch = useDispatch();
-
-  const checkRefreshToken = useCallback(() => {
-    if (!localStorage.getItem("refreshToken")) {
-      dispatch(authStatusChange(false));
-    }
-  }, [dispatch]);
-
   const loadTodoList = useCallback(async () => {
-    checkRefreshToken();
     try {
       const response = await getData(filteredTodoStatus);
       const newData: Todo[] = response.data;
@@ -39,7 +28,7 @@ const TodoListPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [filteredTodoStatus, checkRefreshToken]);
+  }, [filteredTodoStatus]);
 
   useEffect(() => {
     setLoading(true);
