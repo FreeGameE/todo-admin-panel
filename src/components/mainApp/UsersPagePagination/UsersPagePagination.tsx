@@ -71,6 +71,7 @@ const UsersPagePagination: React.FC<UsersPagePaginationProps> = ({
               : undefined
           }
           onClick={() => handlePageChange(page)}
+          key={`page${page}`}
         >
           {page}
         </Button>

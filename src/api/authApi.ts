@@ -19,6 +19,37 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    const isRefreshRequest = originalRequest.url.includes("/auth/refresh");
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isRefreshRequest &&
+      localStorage.getItem("refreshToken")
+    ) {
+      try {
+        originalRequest._retry = true;
+        const data = await refreshAccessToken();
+        tokenManager.setToken(data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+
+        originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        localStorage.removeItem("refreshToken");
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export const registrationUser = async (registrationData: UserRegistration) => {
   try {
     const response = await api.post("/auth/signup", registrationData);
